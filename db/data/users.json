@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Alice Rahman",
+    "email": "alice@example.com",
+    "password": "password123"
+  },
+  {
+    "name": "Bob Nguyen",
+    "email": "bob@example.com",
+    "password": "password123"
+  },
+  {
+    "name": "Carol Singh",
+    "email": "carol@example.com",
+    "password": "password123"
+  },
+  {
+    "name": "David Okafor",
+    "email": "david@example.com",
+    "password": "password123"
+  },
+  {
+    "name": "Eve Martinez",
+    "email": "eve@example.com",
+    "password": "password123"
+  },
+  {
+    "name": "Frank Liu",
+    "email": "frank@example.com",
+    "password": "password123"
+  }
+]

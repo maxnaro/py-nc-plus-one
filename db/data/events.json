@@ -1,0 +1,82 @@
+[
+  {
+    "title": "Leeds Tech Meetup – June Edition",
+    "description": "Monthly meetup for Leeds-based developers. Lightning talks and networking.",
+    "starts_at": "2026-06-18T18:30:00+01:00",
+    "ends_at": "2026-06-18T21:00:00+01:00",
+    "organiser_id": 1,
+    "venue_id": 1
+  },
+  {
+    "title": "Intro to Machine Learning Workshop",
+    "description": "Hands-on workshop covering perceptrons, neural networks, and classifiers using NumPy and PyTorch.",
+    "starts_at": "2026-06-25T10:00:00+01:00",
+    "ends_at": "2026-06-25T13:00:00+01:00",
+    "organiser_id": 2,
+    "venue_id": 3
+  },
+  {
+    "title": "Northern Power Women in Tech",
+    "description": "Panel discussion and networking event celebrating women in the technology industry.",
+    "starts_at": "2026-07-04T17:00:00+01:00",
+    "ends_at": "2026-07-04T20:00:00+01:00",
+    "organiser_id": 3,
+    "venue_id": 2
+  },
+  {
+    "title": "Brighton Python Meetup",
+    "description": "Talks and discussion for Python developers of all experience levels.",
+    "starts_at": "2026-07-10T18:00:00+01:00",
+    "ends_at": "2026-07-10T20:30:00+01:00",
+    "organiser_id": 1,
+    "venue_id": 4
+  },
+  {
+    "title": "API Design Patterns",
+    "description": "A deep dive into RESTful API design, versioning strategies, and common pitfalls.",
+    "starts_at": "2026-07-22T18:00:00+01:00",
+    "ends_at": "2026-07-22T20:00:00+01:00",
+    "organiser_id": 4,
+    "venue_id": 5
+  },
+  {
+    "title": "Open Source Contributor Day",
+    "description": "Spend the day contributing to open source projects with guidance from experienced maintainers.",
+    "starts_at": "2026-08-01T10:00:00+01:00",
+    "ends_at": "2026-08-01T17:00:00+01:00",
+    "organiser_id": 2,
+    "venue_id": 3
+  },
+  {
+    "title": "PostgreSQL for Application Developers",
+    "description": "Practical session on indexes, window functions, and query optimisation for developers.",
+    "starts_at": "2026-08-13T18:30:00+01:00",
+    "ends_at": "2026-08-13T20:30:00+01:00",
+    "organiser_id": 1,
+    "venue_id": 1
+  },
+  {
+    "title": "Autumn Hackathon 2026",
+    "description": "24-hour hackathon open to all skill levels. Form teams on the day or come with one.",
+    "starts_at": "2026-09-05T09:00:00+01:00",
+    "ends_at": "2026-09-06T09:00:00+01:00",
+    "organiser_id": 5,
+    "venue_id": 2
+  },
+  {
+    "title": "Freelancing as a Developer",
+    "description": null,
+    "starts_at": "2026-09-17T18:00:00+01:00",
+    "ends_at": "2026-09-17T20:00:00+01:00",
+    "organiser_id": 3,
+    "venue_id": 5
+  },
+  {
+    "title": "Year in Review: Tech Edition",
+    "description": "Community retrospective looking back at the biggest shifts in the industry over the past year.",
+    "starts_at": "2026-12-10T18:30:00+00:00",
+    "ends_at": "2026-12-10T21:00:00+00:00",
+    "organiser_id": 4,
+    "venue_id": 1
+  }
+]
