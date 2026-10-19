@@ -2,15 +2,16 @@
 
 import json
 import os
+from contextlib import closing
 from pathlib import Path
-from typing import LiteralString, cast
 
-import psycopg
+import psycopg2
+from psycopg2.extensions import connection as Connection
 
 DB_DIR = Path(__file__).resolve().parent
 DATA_DIR = DB_DIR / "data"
 
-INSERT_QUERIES: dict[str, LiteralString] = {
+INSERT_QUERIES = {
     "users": """
         INSERT INTO users (name, email, password)
         VALUES (%(name)s, %(email)s, %(password)s)
@@ -35,7 +36,7 @@ INSERT_QUERIES: dict[str, LiteralString] = {
 }
 
 
-def seed(connection: psycopg.Connection, data_dir: str | Path = DATA_DIR) -> None:
+def seed(connection: Connection, data_dir: str | Path = DATA_DIR) -> None:
     data_dir = Path(data_dir)
     data = {
         table: json.loads((data_dir / f"{table}.json").read_text(encoding="utf-8"))
@@ -43,16 +44,15 @@ def seed(connection: psycopg.Connection, data_dir: str | Path = DATA_DIR) -> Non
     }
     schema = (DB_DIR / "schema.sql").read_text(encoding="utf-8")
 
-    with connection.transaction(), connection.cursor() as cursor:
-        # The checked-in schema file is trusted SQL, cast stops pyright from screaming at me
-        cursor.execute(cast(LiteralString, schema))
+    with connection, connection.cursor() as cursor:
+        cursor.execute(schema)
         for table, query in INSERT_QUERIES.items():
             cursor.executemany(query, data[table])
 
 
 if __name__ == "__main__":
-    with psycopg.connect(
-        os.environ.get("DATABASE_URL", "dbname=nc_plus_one"), autocommit=True
+    with closing(
+        psycopg2.connect(os.environ.get("DATABASE_URL", "dbname=nc_plus_one"))
     ) as connection:
         seed(connection)
     print("Database seeded successfully.")

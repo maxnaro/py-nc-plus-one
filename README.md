@@ -45,14 +45,16 @@ environment settings. To choose a different connection:
 DATABASE_URL='postgresql://localhost/nc_plus_one' python -m db.seed
 ```
 
-The function can also use an existing Psycopg connection and an optional directory
+The function can also use an existing psycopg2 connection and an optional directory
 containing `users.json`, `venues.json`, `events.json`, and `rsvps.json`:
 
 ```python
-import psycopg
+from contextlib import closing
+
+import psycopg2
 from db.seed import seed
 
-with psycopg.connect("dbname=nc_plus_one", autocommit=True) as connection:
+with closing(psycopg2.connect("dbname=nc_plus_one")) as connection:
     seed(connection)
 ```
 
