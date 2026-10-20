@@ -78,3 +78,7 @@ TEST_DATABASE_URL='dbname=nc_plus_one' python -m pytest -v
 ```
 
 Tests are skipped when `TEST_DATABASE_URL` is unset.
+
+GitHub Actions runs the tests on pushes to `main` and when a pull request is opened.
+The workflow uses Python 3.13 and a PostgreSQL 18
+service with its own test database and sets `TEST_DATABASE_URL` automatically.
