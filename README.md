@@ -25,6 +25,14 @@ psql -f db/setup.sql
 This script will drop any existing instance of the `nc_plus_one` database
 and replace it with a new one.
 
+## `.env` Environment
+
+The `connection.py` script is reliant on a connection defined by a
+DSN string environment variable `DSN="..."`.
+
+An example `.env` file can be found in `.env.example` at the project
+route.
+
 ## Seed the Database
 
 After creating the database, run from the project root:
