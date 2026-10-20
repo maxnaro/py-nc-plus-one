@@ -1,37 +1,16 @@
 """Integration tests using a temporary schema in TEST_DATABASE_URL."""
 
 import json
-import os
 import shutil
-from contextlib import closing
 from datetime import datetime
-from uuid import uuid4
 
-import psycopg2
 import pytest
 from psycopg2 import errors, sql
 
 from db.seed import DATA_DIR, seed
+from tests.fixtures import seeded_connection
 
-
-@pytest.fixture
-def seeded_connection():
-    database_url = os.environ.get("TEST_DATABASE_URL")
-    if not database_url:
-        pytest.skip("Set TEST_DATABASE_URL")
-
-    with closing(psycopg2.connect(database_url)) as connection:
-        connection.autocommit = True
-        with connection.cursor() as cursor:
-            schema = sql.Identifier(f"seed_test_{uuid4().hex}")
-            cursor.execute(sql.SQL("CREATE SCHEMA {}").format(schema))
-            try:
-                # Exclude public so the seed can only replace tables in this test schema.
-                cursor.execute(sql.SQL("SET search_path TO {}").format(schema))
-                seed(connection)
-                yield connection
-            finally:
-                cursor.execute(sql.SQL("DROP SCHEMA {} CASCADE").format(schema))
+_ = seeded_connection  # HACK: suppresses unused import warning
 
 
 def assert_seed_data(connection, table):
@@ -154,9 +133,7 @@ def test_failed_seed_restores_existing_tables_and_data(seeded_connection, tmp_pa
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT COUNT(*) FROM users")
         assert cursor.fetchone()[0] == 7
-        cursor.execute(
-            "SELECT name FROM users WHERE email = %s", ("keep@example.com",)
-        )
+        cursor.execute("SELECT name FROM users WHERE email = %s", ("keep@example.com",))
         assert cursor.fetchone() == ("Keep me",)
         cursor.execute("SELECT COUNT(*) FROM events")
         assert cursor.fetchone()[0] == 10
