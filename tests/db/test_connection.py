@@ -9,7 +9,7 @@ from psycopg2 import OperationalError, errors
 from psycopg2.extensions import make_dsn
 
 from db.connection import _get_connection, query
-from tests.fixtures import seeded_connection
+from tests.db.fixtures import seeded_connection
 
 _ = seeded_connection  # HACK: suppresses unused import warning
 
@@ -19,9 +19,7 @@ def query_connection(seeded_connection, monkeypatch):
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT current_schema()")
         schema = cursor.fetchone()[0]
-    dsn = make_dsn(
-        os.environ["TEST_DATABASE_URL"], options=f"-c search_path={schema}"
-    )
+    dsn = make_dsn(os.environ["TEST_DATABASE_URL"], options=f"-c search_path={schema}")
     monkeypatch.setenv("DSN", dsn)
 
     # Use a separate transaction so the seed connection can observe committed data.

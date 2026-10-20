@@ -8,7 +8,7 @@ import pytest
 from psycopg2 import errors, sql
 
 from db.seed import DATA_DIR, seed
-from tests.fixtures import seeded_connection
+from tests.db.fixtures import seeded_connection
 
 _ = seeded_connection  # HACK: suppresses unused import warning
 
