@@ -8,10 +8,7 @@ import pytest
 from psycopg2 import OperationalError, errors
 from psycopg2.extensions import make_dsn
 
-from db.connection import _get_connection, query
-from tests.fixtures import seeded_connection
-
-_ = seeded_connection  # HACK: suppresses unused import warning
+from db.connection import get_connection, query
 
 
 @pytest.fixture
@@ -19,14 +16,12 @@ def query_connection(seeded_connection, monkeypatch):
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT current_schema()")
         schema = cursor.fetchone()[0]
-    dsn = make_dsn(
-        os.environ["TEST_DATABASE_URL"], options=f"-c search_path={schema}"
-    )
+    dsn = make_dsn(os.environ["TEST_DATABASE_URL"], options=f"-c search_path={schema}")
     monkeypatch.setenv("DSN", dsn)
 
     # Use a separate transaction so the seed connection can observe committed data.
-    with closing(_get_connection()) as connection:
-        monkeypatch.setattr("db.connection._get_connection", lambda: connection)
+    with closing(get_connection()) as connection:
+        monkeypatch.setattr("db.connection.get_connection", lambda: connection)
         yield connection
 
 
@@ -46,7 +41,7 @@ def test_get_connection_uses_dsn_environment_variable(monkeypatch, dsn):
     connect = Mock()
     monkeypatch.setattr("db.connection.psycopg2.connect", connect)
 
-    assert _get_connection() is connect.return_value
+    assert get_connection() is connect.return_value
     connect.assert_called_once_with(dsn)
 
 
@@ -160,7 +155,7 @@ def test_failed_query_rolls_back_changes_and_closes_connection(
 
 def test_query_propagates_connection_errors(monkeypatch):
     error = OperationalError("Database unavailable")
-    monkeypatch.setattr("db.connection._get_connection", Mock(side_effect=error))
+    monkeypatch.setattr("db.connection.get_connection", Mock(side_effect=error))
 
     with pytest.raises(OperationalError) as raised:
         query("SELECT 1")

@@ -8,12 +8,12 @@ dotenv.load_dotenv()
 DSN = "DSN"
 
 
-def _get_connection():
+def get_connection():
     return psycopg2.connect(os.environ.get(DSN))
 
 
 def query(sql: str, *args, fetch_one: bool = False):
-    connection = _get_connection()
+    connection = get_connection()
     try:
         with connection.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(sql, args)
