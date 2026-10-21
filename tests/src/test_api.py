@@ -1,6 +1,9 @@
+import logging
 from datetime import datetime
 
 import pytest
+
+LOGGER = logging.getLogger(__name__)
 
 
 def test_get_api_events(client, events_data):
@@ -28,8 +31,8 @@ def test_get_api_events(client, events_data):
     ("id", "status_code"),
     (
         pytest.param(1, 200, id="exists"),
-        pytest.param(999, 404, id="does-not-exist"),
-        pytest.param("this-is-not-an-integer", 400, id="non-int-id"),
+        pytest.param(0, 404, id="does-not-exist"),
+        pytest.param("this-is-not-an-integer", 422, id="non-int-id"),
     ),
 )
 def test_get_api_events_by_id(client, events_data, id, status_code):

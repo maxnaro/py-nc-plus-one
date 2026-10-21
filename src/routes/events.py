@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from db.connection import query
 
@@ -15,3 +15,20 @@ def list_events():
     """
     events = query(query_str)
     return events
+
+
+@router.get("/{id}")
+def get_event_by_id(id: int):
+    query_str = """
+        SELECT * FROM events
+        WHERE id = %s;
+    """
+    event = query(query_str, id, fetch_one=True)
+
+    if event is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "NOT_FOUND", "message": f"Event not found for id: {id}"},
+        )
+
+    return event
