@@ -12,7 +12,7 @@ _ = seeded_connection  # HACK: suppresses unused import warning
 
 
 @pytest.fixture
-def event_data(seeded_connection):
+def events_data(seeded_connection):
     """Return the events loaded into this test's temporary schema."""
     with seeded_connection.cursor(cursor_factory=RealDictCursor) as cursor:
         cursor.execute("SELECT * FROM events ORDER BY id")

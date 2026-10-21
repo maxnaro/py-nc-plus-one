@@ -9,9 +9,6 @@ from psycopg2 import OperationalError, errors
 from psycopg2.extensions import make_dsn
 
 from db.connection import get_connection, query
-from tests.db.fixtures import seeded_connection
-
-_ = seeded_connection  # HACK: suppresses unused import warning
 
 
 @pytest.fixture
