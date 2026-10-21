@@ -21,7 +21,7 @@ def query_connection(seeded_connection, monkeypatch):
 
     # Use a separate transaction so the seed connection can observe committed data.
     with closing(get_connection()) as connection:
-        monkeypatch.setattr("db.connection._get_connection", lambda: connection)
+        monkeypatch.setattr("db.connection.get_connection", lambda: connection)
         yield connection
 
 
@@ -155,7 +155,7 @@ def test_failed_query_rolls_back_changes_and_closes_connection(
 
 def test_query_propagates_connection_errors(monkeypatch):
     error = OperationalError("Database unavailable")
-    monkeypatch.setattr("db.connection._get_connection", Mock(side_effect=error))
+    monkeypatch.setattr("db.connection.get_connection", Mock(side_effect=error))
 
     with pytest.raises(OperationalError) as raised:
         query("SELECT 1")
