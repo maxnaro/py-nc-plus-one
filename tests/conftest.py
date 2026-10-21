@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import closing
 from uuid import uuid4
@@ -11,6 +12,8 @@ from psycopg2.extras import RealDictCursor
 
 from db.seed import seed
 from src.main import app
+
+LOGGER = logging.getLogger(__name__)
 
 
 @pytest.fixture
