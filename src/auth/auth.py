@@ -1,13 +1,17 @@
 import os
 import time
 from enum import Enum
+from typing import Annotated
 
 import jwt
 from dotenv import load_dotenv
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from passlib.context import CryptContext
 
 load_dotenv()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+bearer = HTTPBearer()
 
 
 class JWT(Enum):
@@ -33,3 +37,25 @@ def create_access_token(user_id: int) -> str:
     payload = {"sub": str(user_id), "iat": now, "exp": now + JWT.EXPIRY.value}
 
     return jwt.encode(payload, os.environ["JWT_SECRET"], algorithm=JWT.ALGORITHM.value)
+
+
+def _validate_access_token(token: str) -> dict:
+    return jwt.decode(
+        token,
+        os.environ["JWT_SECRET"],
+        algorithms=[JWT.ALGORITHM.value],
+        options={"require": ["sub", "iat", "exp"]},
+    )
+
+
+def require_token(
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(bearer)],
+) -> dict:
+    try:
+        return _validate_access_token(credentials.credentials)
+    except jwt.InvalidTokenError as exc:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired access token",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
