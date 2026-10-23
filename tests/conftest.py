@@ -10,8 +10,8 @@ from psycopg2 import sql
 from psycopg2.extensions import make_dsn
 from psycopg2.extras import RealDictCursor
 
-from db.seed import seed
-from src.main import app
+from nc_plus_one.db.seed import seed
+from nc_plus_one.main import app
 
 LOGGER = logging.getLogger(__name__)
 

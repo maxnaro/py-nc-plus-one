@@ -39,6 +39,11 @@ def test_get_api_events_by_id(client, events_data, id, status_code):
     response = client.get(f"/api/events/{id}", follow_redirects=False)
     assert response.status_code == status_code
 
+    if status_code == 404:
+        assert response.json() == {
+            "error": {"code": "NOT_FOUND", "message": "Event not found for id: 0"}
+        }
+
     if status_code == 200:
         event = response.json()
         assert isinstance(event, dict)

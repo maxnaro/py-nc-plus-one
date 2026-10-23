@@ -1,13 +1,18 @@
 """Integration tests using a temporary schema in TEST_DATABASE_URL."""
 
 import json
+import os
 import shutil
+import subprocess
+import sys
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 from psycopg2 import errors, sql
+from psycopg2.extensions import make_dsn
 
-from db.seed import DATA_DIR, seed
+from nc_plus_one.db.seed import DATA_DIR, seed
 
 
 def assert_seed_data(connection, table):
@@ -61,6 +66,37 @@ def test_reseeding_replaces_data_and_resets_ids(seeded_connection):
         )
         new_id = cursor.fetchone()[0]
     assert new_id == 7
+
+
+def test_seed_finds_assets_outside_project_directory(
+    seeded_connection, monkeypatch, tmp_path
+):
+    monkeypatch.chdir(tmp_path)
+
+    seed(seeded_connection)
+
+    for table in ("users", "venues", "events", "rsvps"):
+        assert_seed_data(seeded_connection, table)
+
+
+def test_seed_module_command(seeded_connection):
+    with seeded_connection.cursor() as cursor:
+        cursor.execute("SELECT current_schema()")
+        schema = cursor.fetchone()[0]
+    dsn = make_dsn(os.environ["TEST_DATABASE_URL"], options=f"-c search_path={schema}")
+
+    result = subprocess.run(
+        [sys.executable, "-m", "nc_plus_one.db.seed"],
+        cwd=Path(__file__).resolve().parents[2],
+        env={**os.environ, "DATABASE_URL": dsn},
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    assert result.stdout.strip() == "Database seeded successfully."
+    for table in ("users", "venues", "events", "rsvps"):
+        assert_seed_data(seeded_connection, table)
 
 
 @pytest.mark.parametrize(

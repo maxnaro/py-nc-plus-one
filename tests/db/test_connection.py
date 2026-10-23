@@ -8,7 +8,7 @@ import pytest
 from psycopg2 import OperationalError, errors
 from psycopg2.extensions import make_dsn
 
-from db.connection import get_connection, query
+from nc_plus_one.db.connection import get_connection, query
 
 
 @pytest.fixture
@@ -21,7 +21,7 @@ def query_connection(seeded_connection, monkeypatch):
 
     # Use a separate transaction so the seed connection can observe committed data.
     with closing(get_connection()) as connection:
-        monkeypatch.setattr("db.connection.get_connection", lambda: connection)
+        monkeypatch.setattr("nc_plus_one.db.connection.get_connection", lambda: connection)
         yield connection
 
 
@@ -39,7 +39,7 @@ def test_get_connection_uses_dsn_environment_variable(monkeypatch, dsn):
     else:
         monkeypatch.setenv("DSN", dsn)
     connect = Mock()
-    monkeypatch.setattr("db.connection.psycopg2.connect", connect)
+    monkeypatch.setattr("nc_plus_one.db.connection.psycopg2.connect", connect)
 
     assert get_connection() is connect.return_value
     connect.assert_called_once_with(dsn)
@@ -155,7 +155,7 @@ def test_failed_query_rolls_back_changes_and_closes_connection(
 
 def test_query_propagates_connection_errors(monkeypatch):
     error = OperationalError("Database unavailable")
-    monkeypatch.setattr("db.connection.get_connection", Mock(side_effect=error))
+    monkeypatch.setattr("nc_plus_one.db.connection.get_connection", Mock(side_effect=error))
 
     with pytest.raises(OperationalError) as raised:
         query("SELECT 1")

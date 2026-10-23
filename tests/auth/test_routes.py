@@ -100,7 +100,9 @@ def test_login_does_not_reveal_which_credential_is_invalid(
     )
 
     assert wrong_password.status_code == unknown_identifier.status_code == 401
-    assert wrong_password.json() == unknown_identifier.json()
+    assert wrong_password.json() == unknown_identifier.json() == {
+        "error": {"code": "UNAUTHORIZED", "message": "Invalid login credentials."}
+    }
 
 
 @pytest.mark.parametrize(
@@ -212,6 +214,9 @@ def test_duplicate_user_returns_409(
     )
 
     assert response.status_code == 409
+    assert response.json() == {
+        "error": {"code": "CONFLICT", "message": "Email already registered."}
+    }
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT id, name, email, hashed_password FROM users ORDER BY id")
         assert cursor.fetchall() == original_users
