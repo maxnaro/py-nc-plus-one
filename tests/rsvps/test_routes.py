@@ -1,11 +1,10 @@
 """RSVP contract: authenticated creation, missing events, and duplicates."""
 
 from datetime import datetime
-from os import stat
 
 import pytest
 
-from src.auth.auth import create_access_token
+from nc_plus_one.auth.security import create_access_token
 
 
 @pytest.fixture(autouse=True)
@@ -71,6 +70,12 @@ def test_rsvp_for_nonexistent_event_returns_404(
     response = client.post(f"/api/events/{missing_event_id}/rsvp", headers=auth_headers)
 
     assert response.status_code == 404
+    assert response.json() == {
+        "error": {
+            "code": "NOT_FOUND",
+            "message": f"No event found for ID: {missing_event_id}.",
+        }
+    }
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT * FROM rsvps ORDER BY id")
         assert cursor.fetchall() == original_rsvps
@@ -87,6 +92,12 @@ def test_duplicate_rsvp_returns_409(client, seeded_connection, auth_headers):
     response = client.post("/api/events/9/rsvp", headers=auth_headers)
 
     assert response.status_code == 409
+    assert response.json() == {
+        "error": {
+            "code": "CONFLICT",
+            "message": "Existing RSVP found for event ID: 9, attendee: 2.",
+        }
+    }
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT * FROM rsvps ORDER BY id")
         assert cursor.fetchall() == original_rsvps
@@ -110,6 +121,15 @@ def test_delete_me_returns_status_code(
     headers = auth_headers if use_valid_token else {"Authorization": "Deez"}
     response = client.delete(f"/api/events/{event_id}/rsvp/me", headers=headers)
     assert response.status_code == status_code
+    if status_code == 204:
+        assert response.content == b""
+    elif status_code == 404:
+        assert response.json() == {
+            "error": {
+                "code": "NOT_FOUND",
+                "message": f"No RSVP found for event: {event_id}, user: 2",
+            }
+        }
 
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT * FROM rsvps ORDER BY id")

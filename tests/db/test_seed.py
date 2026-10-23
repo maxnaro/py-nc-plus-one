@@ -7,7 +7,7 @@ from datetime import datetime
 import pytest
 from psycopg2 import errors, sql
 
-from db.seed import DATA_DIR, seed
+from nc_plus_one.db.seed import DATA_DIR, seed
 
 
 def assert_seed_data(connection, table):
