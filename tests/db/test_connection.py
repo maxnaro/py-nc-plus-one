@@ -98,7 +98,7 @@ def test_query_with_returning_commits_and_returns_inserted_row(
     seeded_connection, query_connection, fetch_one
 ):
     result = query(
-        """INSERT INTO users (name, email, password)
+        """INSERT INTO users (name, email, hashed_password)
            VALUES (%s, %s, %s) RETURNING id, name""",
         "New user",
         "new@example.com",
@@ -126,14 +126,14 @@ def test_query_with_returning_commits_and_returns_inserted_row(
         pytest.param(
             errors.NotNullViolation,
             """UPDATE users SET name = %s WHERE id = 1;
-               INSERT INTO users (email, password) VALUES (%s, %s)""",
+               INSERT INTO users (email, hashed_password) VALUES (%s, %s)""",
             ("Changed", "missing-name@example.com", "example"),
             id="required-name",
         ),
         pytest.param(
             errors.UniqueViolation,
             """UPDATE users SET name = %s WHERE id = 1;
-               INSERT INTO users (name, email, password) VALUES (%s, %s, %s)""",
+               INSERT INTO users (name, email, hashed_password) VALUES (%s, %s, %s)""",
             ("Changed", "Duplicate", "alice@example.com", "example"),
             id="unique-email",
         ),

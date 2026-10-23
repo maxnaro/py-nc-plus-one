@@ -55,7 +55,7 @@ def test_reseeding_replaces_data_and_resets_ids(seeded_connection):
         assert_seed_data(seeded_connection, table)
     with seeded_connection.cursor() as cursor:
         cursor.execute(
-            """INSERT INTO users (name, email, password)
+            """INSERT INTO users (name, email, hashed_password)
                VALUES (%s, %s, %s) RETURNING id""",
             ("New user", "new@example.com", "example"),
         )
@@ -68,13 +68,13 @@ def test_reseeding_replaces_data_and_resets_ids(seeded_connection):
     (
         pytest.param(
             errors.NotNullViolation,
-            "INSERT INTO users (email, password) VALUES (%s, %s)",
+            "INSERT INTO users (email, hashed_password) VALUES (%s, %s)",
             ("missing-name@example.com", "example"),
             id="required-name",
         ),
         pytest.param(
             errors.UniqueViolation,
-            "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
+            "INSERT INTO users (name, email, hashed_password) VALUES (%s, %s, %s)",
             ("Duplicate", "alice@example.com", "example"),
             id="unique-email",
         ),
@@ -114,7 +114,7 @@ def test_enforces_required_fields_uniqueness_and_foreign_keys(
 def test_failed_seed_restores_existing_tables_and_data(seeded_connection, tmp_path):
     with seeded_connection.cursor() as cursor:
         cursor.execute(
-            """INSERT INTO users (name, email, password)
+            """INSERT INTO users (name, email, hashed_password)
                VALUES (%s, %s, %s)""",
             ("Keep me", "keep@example.com", "example"),
         )

@@ -66,7 +66,8 @@ with closing(psycopg2.connect("dbname=nc_plus_one")) as connection:
     seed(connection)
 ```
 
-The fixture passwords are copied as supplied for development.
+The user fixtures contain bcrypt hashes in `hashed_password`. All seeded users
+have the development password `password123`.
 
 ## Tests
 

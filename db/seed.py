@@ -13,8 +13,8 @@ DATA_DIR = DB_DIR / "data"
 
 INSERT_QUERIES = {
     "users": """
-        INSERT INTO users (name, email, password)
-        VALUES (%(name)s, %(email)s, %(password)s)
+        INSERT INTO users (name, email, hashed_password)
+        VALUES (%(name)s, %(email)s, %(hashed_password)s)
     """,
     "venues": """
         INSERT INTO venues (name, address, capacity)
