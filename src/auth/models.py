@@ -17,3 +17,9 @@ class LoginRequest(BaseModel):
             raise ValueError("LoginRequest requires either email or name, not both")
 
         return self
+
+
+class RegisterRequest(BaseModel):
+    email: str
+    name: str
+    password: str
