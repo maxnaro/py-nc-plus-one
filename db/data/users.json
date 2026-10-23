@@ -2,31 +2,31 @@
   {
     "name": "Alice Rahman",
     "email": "alice@example.com",
-    "password": "password123"
+    "hashed_password": "$2b$12$s8s/R9XDKgqxv2GUZzynB..0BgLePOwJ6JKJEFoK5csINS7Z2M.mG"
   },
   {
     "name": "Bob Nguyen",
     "email": "bob@example.com",
-    "password": "password123"
+    "hashed_password": "$2b$12$wdzGx7aAMSmou2sE.tB9jeRQeIaX0/VK23TCBXHahBnx.ItbJLmhu"
   },
   {
     "name": "Carol Singh",
     "email": "carol@example.com",
-    "password": "password123"
+    "hashed_password": "$2b$12$6i0pgzWj8SFqaCxlLrVYBOlt06Qkc2k0oY1/SgHm5CJvGjXRR1Uoy"
   },
   {
     "name": "David Okafor",
     "email": "david@example.com",
-    "password": "password123"
+    "hashed_password": "$2b$12$drMwZv6q5OQR5fLVHLtKROGVML1bM1pk5yGx0PTZre4U2PhND9gTC"
   },
   {
     "name": "Eve Martinez",
     "email": "eve@example.com",
-    "password": "password123"
+    "hashed_password": "$2b$12$3vCidPyoYrTXhA0d2.807u5HVCBtTYcgDdszhYckQgU9qRXGvQsy."
   },
   {
     "name": "Frank Liu",
     "email": "frank@example.com",
-    "password": "password123"
+    "hashed_password": "$2b$12$pJ2aAVd89Vn8fbCAnvVg9eRgD9jkjF6s71lA2QHBdZT3hazMD1ory"
   }
 ]
