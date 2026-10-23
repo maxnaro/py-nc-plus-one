@@ -1,6 +1,7 @@
 """RSVP contract: authenticated creation, missing events, and duplicates."""
 
 from datetime import datetime
+from os import stat
 
 import pytest
 
@@ -58,16 +59,16 @@ def test_rsvp_without_valid_token_returns_401(client, seeded_connection, headers
         assert cursor.fetchall() == original_rsvps
 
 
-def test_rsvp_for_nonexistent_event_returns_404(client, seeded_connection, auth_headers):
+def test_rsvp_for_nonexistent_event_returns_404(
+    client, seeded_connection, auth_headers
+):
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT COALESCE(MAX(id), 0) + 1 FROM events")
         missing_event_id = cursor.fetchone()[0]
         cursor.execute("SELECT * FROM rsvps ORDER BY id")
         original_rsvps = cursor.fetchall()
 
-    response = client.post(
-        f"/api/events/{missing_event_id}/rsvp", headers=auth_headers
-    )
+    response = client.post(f"/api/events/{missing_event_id}/rsvp", headers=auth_headers)
 
     assert response.status_code == 404
     with seeded_connection.cursor() as cursor:
@@ -89,3 +90,30 @@ def test_duplicate_rsvp_returns_409(client, seeded_connection, auth_headers):
     with seeded_connection.cursor() as cursor:
         cursor.execute("SELECT * FROM rsvps ORDER BY id")
         assert cursor.fetchall() == original_rsvps
+
+
+@pytest.mark.parametrize(
+    ("use_valid_token", "event_id", "status_code"),
+    (
+        pytest.param(True, 1, 204, id="rsvp-exists"),
+        pytest.param(True, 9, 404, id="no-rsvp-exists"),
+        pytest.param(False, 1, 401, id="invalid-token"),
+    ),
+)
+def test_delete_me_returns_status_code(
+    client, seeded_connection, auth_headers, use_valid_token, event_id, status_code
+):
+    with seeded_connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM rsvps ORDER BY id")
+        original_rsvps = cursor.fetchall()
+
+    headers = auth_headers if use_valid_token else {"Authorization": "Deez"}
+    response = client.delete(f"/api/events/{event_id}/rsvp/me", headers=headers)
+    assert response.status_code == status_code
+
+    with seeded_connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM rsvps ORDER BY id")
+        if status_code == 204:
+            assert cursor.fetchall() != original_rsvps
+        else:
+            assert cursor.fetchall() == original_rsvps

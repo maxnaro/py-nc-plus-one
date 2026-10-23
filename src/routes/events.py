@@ -11,6 +11,7 @@ class ROUTES(StrEnum):
     EVENTS = auto()
     ID = "{id}"
     RSVP = auto()
+    ME = auto()
 
 
 router = APIRouter(prefix=f"/{ROUTES.EVENTS.value}", tags=[ROUTES.EVENTS.value])
@@ -82,3 +83,26 @@ def rsvp(
         id,
         fetch_one=True,
     )
+
+
+@router.delete("/{id}/rsvp/me", status_code=204)
+def delete_rsvp(id: int, payload: Annotated[dict, Depends(require_token)]):
+    attendee_id = payload["sub"]
+    result = query(
+        """
+        DELETE FROM rsvps WHERE event_id = %s AND attendee_id = %s
+        RETURNING id;
+    """,
+        id,
+        attendee_id,
+        fetch_one=True,
+    )
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": "NOT_FOUND",
+                "message": f"No RSVP found for event: {id}, user: {attendee_id}",
+            },
+        )
