@@ -1,7 +1,17 @@
+# Python
 .venv
 __pycache__/
 .pytest_cache/
-.env
 .coverage
+
+# Terraform
 .terraform/
-.tfvars
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.json
+*.tfplan
+
+# Environment
+.env
+
