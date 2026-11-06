@@ -4,12 +4,10 @@ from nc_plus_one.db.connection import query
 
 
 def list_events():
-    return query(
-        """
+    return query("""
         SELECT * FROM events
         ORDER BY starts_at DESC;
-        """
-    )
+        """)
 
 
 def get_event_by_id(event_id: int):

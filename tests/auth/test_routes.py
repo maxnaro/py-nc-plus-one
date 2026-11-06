@@ -100,9 +100,11 @@ def test_login_does_not_reveal_which_credential_is_invalid(
     )
 
     assert wrong_password.status_code == unknown_identifier.status_code == 401
-    assert wrong_password.json() == unknown_identifier.json() == {
-        "error": {"code": "UNAUTHORIZED", "message": "Invalid login credentials."}
-    }
+    assert (
+        wrong_password.json()
+        == unknown_identifier.json()
+        == {"error": {"code": "UNAUTHORIZED", "message": "Invalid login credentials."}}
+    )
 
 
 @pytest.mark.parametrize(

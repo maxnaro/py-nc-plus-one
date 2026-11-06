@@ -19,6 +19,4 @@ def create_rsvp(event_id: int, attendee_id: str):
 
 def delete_rsvp(event_id: int, attendee_id: str):
     if repository.delete_rsvp(event_id, attendee_id) is None:
-        raise NotFoundError(
-            f"No RSVP found for event: {event_id}, user: {attendee_id}"
-        )
+        raise NotFoundError(f"No RSVP found for event: {event_id}, user: {attendee_id}")
